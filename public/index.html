@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KILUA LINK</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070d12;--card:#10171e;--line:#1e2a33;--txt:#eaf3f0;--mut:#8b9aa3;--g:#10b981;--y:#f59e0b}
+*{box-sizing:border-box;margin:0}
+body{font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;background:radial-gradient(900px 500px at 50% 30%,#0e3a30 0,transparent 70%),var(--bg);color:var(--txt);min-height:100vh;line-height:1.7}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);background:#0a1117cc;position:sticky;top:0;backdrop-filter:blur(8px);z-index:5}
+.logo{display:flex;align-items:center;gap:12px;font-weight:700;font-size:22px;letter-spacing:.5px}
+.logo i{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--g),var(--y));display:grid;place-items:center;font-style:normal;font-size:24px}
+.burger{width:54px;height:54px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:26px;cursor:pointer}
+nav{display:none;padding:12px 20px;border-bottom:1px solid var(--line)}
+nav.open{display:block}
+nav a{display:block;padding:12px 18px;margin-bottom:8px;border-radius:18px;background:#141c24;color:var(--txt);text-decoration:none}
+main{max-width:560px;margin:auto;padding:0 20px 40px}
+h1{font-size:44px;line-height:1.35;text-align:center;margin:60px 0 14px}
+h1 span{background:linear-gradient(90deg,var(--y),#5ba7c8,var(--g));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{text-align:center;color:var(--mut);font-size:20px;margin-bottom:34px}
+.card{background:linear-gradient(180deg,#18232b,#10171e);border:1px solid var(--line);border-radius:36px;padding:34px 30px}
+label.t{display:block;color:var(--mut);margin-bottom:12px}
+.row{display:flex;gap:12px;direction:ltr}
+select,input[type=tel]{height:68px;border-radius:22px;border:1px solid var(--line);background:#0b1218;color:var(--txt);font:inherit;font-size:22px;padding:0 18px}
+select{width:108px;flex:none;font-size:18px;padding:0 8px}input[type=tel]{flex:1;min-width:0;font-size:24px;letter-spacing:1px;text-align:left}
+.chk{display:flex;gap:14px;align-items:flex-start;margin:22px 0;color:var(--mut)}
+.chk input{width:26px;height:26px;margin-top:6px;flex:none}
+button.go{width:100%;height:68px;border:0;border-radius:22px;font:inherit;font-weight:700;font-size:22px;color:#06201a;cursor:pointer;background:linear-gradient(90deg,var(--g),var(--y))}
+button.go:disabled{opacity:.6}
+#resView{display:none;text-align:center}
+.timer{color:var(--mut);margin-bottom:18px}.timer b{color:#38bdf8;font-size:22px}
+.code{display:flex;gap:8px;direction:ltr;justify-content:center;align-items:center;margin-bottom:18px}
+.code span{flex:1;max-width:48px;height:72px;border-radius:16px;border:1px solid var(--line);background:#0b1218;display:grid;place-items:center;font:700 30px ui-monospace,Menlo,monospace}
+.code i{width:12px;height:5px;border-radius:3px;background:var(--mut);flex:none}
+.ghost{width:100%;height:60px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--txt);font:inherit;font-size:19px;cursor:pointer;margin-bottom:18px}
+.steps{text-align:right;color:var(--mut);margin:0 0 20px;padding:0 4px;list-style:none;line-height:2}
+.steps b{color:var(--txt)}
+#err{color:#f87171;margin-top:14px;text-align:center}
+.feat{display:grid;gap:16px;margin-top:50px}
+.feat .card{padding:26px}
+.feat .ic{font-size:36px}
+.feat h3{margin:8px 0 2px}
+.feat p{color:var(--mut)}
+h2{font-size:36px;text-align:center;margin:60px 0 24px}
+details{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px 26px;margin-bottom:16px}
+summary{font-weight:700;font-size:20px;cursor:pointer;list-style:none}
+details p{color:var(--mut);margin-top:10px}
+footer{border-top:1px solid var(--line);text-align:center;padding:30px 20px;color:var(--mut)}
+footer a{color:#38bdf8;margin:0 10px;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><i>⚡</i>KILUA LINK</div>
+  <button class="burger" id="bg" aria-label="القائمة">☰</button>
+</header>
+<nav id="nav">
+  <a href="#home">🏠 الرئيسية</a><a href="#features">✨ المميزات</a><a href="#faq">❓ الأسئلة</a>
+  <a data-link="channel" href="#" target="_blank">📢 القناة</a>
+  <a data-link="contact" href="#" target="_blank">💬 تواصل معنا</a>
+</nav>
+<main>
+  <section id="home">
+    <h1>ثبّت بوتك <span>برقمك فقط</span></h1>
+    <p class="sub">أدخل رقم واتساب، واحصل على كود الربط، ويعمل بوتك خلال ثوانٍ.</p>
+    <div class="card">
+      <div id="formView">
+      <label class="t">رقم واتساب</label>
+      <div class="row">
+        <select id="cc">
+          <option value="212">🇲🇦 +212</option>
+          <option value="20">🇪🇬 +20</option>
+          <option value="966">🇸🇦 +966</option>
+          <option value="971">🇦🇪 +971</option>
+          <option value="965">🇰🇼 +965</option>
+          <option value="974">🇶🇦 +974</option>
+          <option value="973">🇧🇭 +973</option>
+          <option value="968">🇴🇲 +968</option>
+          <option value="962">🇯🇴 +962</option>
+          <option value="961">🇱🇧 +961</option>
+          <option value="963">🇸🇾 +963</option>
+          <option value="964">🇮🇶 +964</option>
+          <option value="970">🇵🇸 +970</option>
+          <option value="967">🇾🇪 +967</option>
+          <option value="218">🇱🇾 +218</option>
+          <option value="216">🇹🇳 +216</option>
+          <option value="213">🇩🇿 +213</option>
+          <option value="249">🇸🇩 +249</option>
+          <option value="222">🇲🇷 +222</option>
+          <option value="252">🇸🇴 +252</option>
+          <option value="253">🇩🇯 +253</option>
+          <option value="269">🇰🇲 +269</option>
+        </select>
+        <input id="num" type="tel" inputmode="numeric" placeholder="1012345678">
+      </div>
+      <label class="chk"><input type="checkbox" id="ok"><span>أفهم أن البوت سيعمل كجهاز مرتبط بحسابي، وأستطيع فصله في أي وقت من «الأجهزة المرتبطة».</span></label>
+      <button class="go" id="btn">احصل على الكود</button>
+      <div id="err"></div>
+      </div>
+      <div id="resView">
+        <div class="timer" id="timer">الكود صالح لمدة <b id="left">2:00</b></div>
+        <div class="code" id="code"></div>
+        <button class="ghost" id="copy">📋 نسخ الكود</button>
+        <ol class="steps">
+          <li>١. افتح <b>واتساب ← الأجهزة المرتبطة</b></li>
+          <li>٢. اختر <b>ربط جهاز</b> ثم <b>الربط برقم الهاتف</b></li>
+          <li>٣. اكتب الكود الظاهر أعلاه</li>
+        </ol>
+        <button class="ghost" id="back" style="margin:0">رجوع</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="feat" id="features">
+    <div class="card"><div class="ic">⚡</div><h3>سريع جدًا</h3><p>يستغرق الربط ثوانيَ معدودة دون الحاجة إلى مسح رمز QR.</p></div>
+    <div class="card"><div class="ic">🌍</div><h3>بوت عربي</h3><p>جميع القوائم والرسائل باللغة العربية.</p></div>
+  </section>
+
+  <section id="faq">
+    <h2>أسئلة شائعة</h2>
+    <details><summary>الكود لا يعمل؟</summary><p>تأكد من إدخال الرقم مع رمز الدولة، ومن تحديث واتساب، وأدخل الكود سريعًا لأنه ينتهي بعد دقيقة تقريبًا.</p></details>
+    <details><summary>كيف أوقف البوت؟</summary><p>من واتساب ← الأجهزة المرتبطة ← اختر البوت ← تسجيل الخروج.</p></details>
+    <details><summary>لماذا تظهر «محاولات كثيرة»؟</summary><p>طلبت الكود مرات عديدة خلال وقت قصير. انتظر قليلًا ثم أعد المحاولة.</p></details>
+  </section>
+</main>
+<footer>
+  <p>© 2026 KILUA LINK — تطوير YOUSSEF — جميع الحقوق محفوظة</p>
+  <p><a data-link="channel" href="#" target="_blank">القناة</a><a data-link="contact" href="#" target="_blank">واتساب</a></p>
+</footer>
+<script>
+// ===== إعدادات =====
+const API = ''; // اتركه فارغًا إذا كان الخادم على نفس النطاق
+const LINKS = {
+  channel: 'https://whatsapp.com/channel/0029VbDby949WtC6u3UcOg1J',
+  contact: 'https://wa.me/212696987737'
+};
+document.querySelectorAll('[data-link]').forEach(a => a.href = LINKS[a.dataset.link]);
+// ===================
+const $ = id => document.getElementById(id);
+$('bg').onclick = () => $('nav').classList.toggle('open');
+document.querySelectorAll('nav a[href^="#"]').forEach(a => a.onclick = () => $('nav').classList.remove('open'));
+let tick;
+const show = r => { $('formView').style.display = r ? 'none' : 'block'; $('resView').style.display = r ? 'block' : 'none'; };
+function showCode(raw) {
+  const c = raw.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  $('code').innerHTML = [...c].map((ch, i) => (i === 4 ? '<i></i>' : '') + '<span>' + ch + '</span>').join('');
+  $('copy').dataset.code = c; $('copy').textContent = '📋 نسخ الكود';
+  let t = 120; clearInterval(tick);
+  const draw = () => { $('timer').innerHTML = t > 0 ? 'الكود صالح لمدة <b>' + Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') + '</b>' : '<b style="color:#f87171">انتهت صلاحية الكود، ارجع واطلب كودًا جديدًا</b>'; };
+  draw(); tick = setInterval(() => { t--; draw(); if (t <= 0) clearInterval(tick); }, 1000);
+  show(true);
+}
+$('copy').onclick = async () => {
+  try { await navigator.clipboard.writeText($('copy').dataset.code); $('copy').textContent = '✅ تم النسخ'; } catch { $('copy').textContent = 'انسخ الكود يدويًا'; }
+};
+$('back').onclick = () => { clearInterval(tick); show(false); };
+$('btn').onclick = async () => {
+  $('err').textContent = '';
+  const n = $('num').value.replace(/\D/g, '').replace(/^0+/, '');
+  if (n.length < 7) return $('err').textContent = 'أدخل رقمًا صحيحًا';
+  if (!$('ok').checked) return $('err').textContent = 'يجب الموافقة على الشرط أولًا';
+  $('btn').disabled = true; $('btn').textContent = 'جاري التحضير...';
+  try {
+    const r = await fetch(API + '/api/pair', {method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({number: $('cc').value + n})});
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'حدث خطأ');
+    showCode(d.code);
+  } catch (e) { $('err').textContent = e.message; }
+  $('btn').disabled = false; $('btn').textContent = 'احصل على الكود';
+};
+</script>
+</body>
+</html>
