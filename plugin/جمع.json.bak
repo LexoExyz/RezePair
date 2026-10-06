@@ -1,0 +1,128 @@
+import baileys from '@whiskeysockets/baileys'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+const gamaaData = require('../src/data/جمع.json')
+
+const { generateWAMessageFromContent, proto, prepareWAMessageMedia } = baileys
+
+let gamaaGames = new Map()
+
+const GAMAA_IMAGE = "https://files.catbox.moe/w8ycz1.jpg" // صورة افتراضية (يمكنك تغييرها)
+const reward = 20
+const gameTime = 30000 // 30 ثانية للإجابة
+
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+    let chatId = m.chat
+    let senderId = m.sender
+
+    // 1. معالجة التحقق من الإجابة عبر الأزرار
+    if (text.includes('check_gamaa|')) {
+        let game = gamaaGames.get(chatId)
+        if (!game) return 
+        
+        let [_, userChoice, correctResponse] = text.split('|')
+
+        if (userChoice.trim() === correctResponse.trim()) {
+            clearTimeout(game.timeoutId)
+            gamaaGames.delete(chatId)
+            let info = `✅ *إجابة صحيحة يا بطل!* 🎉\n🎯 الجمع الصحيح: *${correctResponse}*\n🏆 الفائز المميز: @${senderId.split('@')[0]}\n📊 المكافأة: +${reward} نقطة`
+            return conn.reply(chatId, info, fkontak, rcanal, { mentions: [senderId] })
+        } else {
+            game.attempts -= 1
+            if (game.attempts > 0) {
+                let info = `❌ *إجابة خاطئة!* باقي معك محاولة واحدة ⏳`
+                return conn.reply(chatId, info, fkontak, rcanal)
+            } else {
+                clearTimeout(game.timeoutId)
+                gamaaGames.delete(chatId)
+                let info = `💀 *انتهت المحاولات!* الجمع الصحيح كان: *${correctResponse}*`
+                return conn.reply(chatId, info, fkontak, rcanal)
+            }
+        }
+    }
+
+    // 2. معالجة الانسحاب
+    if (text === 'انسحاب_جمع') {
+        let game = gamaaGames.get(chatId)
+        if (!game) {
+            let info = '❌ لا توجد لعبة جمع جارية حالياً.'
+            return conn.reply(chatId, info, fkontak, rcanal)
+        }
+        clearTimeout(game.timeoutId)
+        gamaaGames.delete(chatId)
+        let info = `🚪 انسحبت! الإجابة الصحيحة كانت: *${game.currentGamaa.response}*`
+        return conn.reply(chatId, info, fkontak, rcanal)
+    }
+
+    if (gamaaGames.has(chatId)) {
+        let info = '⚠️ توجد لعبة جمع جارية بالفعل في هذه الدردشة!'
+        return conn.reply(chatId, info, fkontak, rcanal)
+    }
+
+    // 3. بدء جولة جمع جديدة
+    try {
+        if (!gamaaData || gamaaData.length === 0) {
+            let info = '❌ ملف بيانات جمع غير متوفر أو فارغ.'
+            return conn.reply(chatId, info, fkontak, rcanal)
+        }
+
+        const selectedGamaa = gamaaData[Math.floor(Math.random() * gamaaData.length)]
+        
+        // استخراج 3 إجابات خاطئة عشوائية + الإجابة الصحيحة وخلطهم
+        let allResponses = gamaaData.map(item => item.response)
+        let wrongOptions = [...new Set(allResponses.filter(res => res !== selectedGamaa.response))]
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 3)
+        let choices = [...wrongOptions, selectedGamaa.response].sort(() => 0.5 - Math.random())
+
+        gamaaGames.set(chatId, {
+            currentGamaa: selectedGamaa,
+            attempts: 2,
+            timeoutId: setTimeout(() => {
+                if (gamaaGames.has(chatId)) {
+                    gamaaGames.delete(chatId)
+                    let info = `❌ *انتهى الوقت!* ⏰\n💡 الجمع الصحيح كان: *${selectedGamaa.response}*`
+                    conn.reply(chatId, info, fkontak, rcanal)
+                }
+            }, gameTime)
+        })
+
+        let gamaaMedia = await prepareWAMessageMedia({ image: { url: GAMAA_IMAGE } }, { upload: conn.waUploadToServer })
+
+        const buttons = choices.map(choice => ({
+            name: "quick_reply",
+            buttonParamsJson: JSON.stringify({
+                display_text: choice,
+                id: `${usedPrefix + command} check_gamaa|${choice}|${selectedGamaa.response}`
+            })
+        }))
+        buttons.push({ name: "quick_reply", buttonParamsJson: JSON.stringify({ display_text: "🚪 انسحاب", id: `${usedPrefix + command} انسحاب_جمع` }) })
+
+        const gameMsg = generateWAMessageFromContent(chatId, {
+            viewOnceMessage: {
+                message: {
+                    interactiveMessage: proto.Message.InteractiveMessage.fromObject({
+                        header: proto.Message.InteractiveMessage.Header.create({ hasMediaAttachment: true, imageMessage: gamaaMedia.imageMessage }),
+                        body: proto.Message.InteractiveMessage.Body.create({ text: `🧩 *لعبة جمع الحروف*\n\nاجمع الحروف لتكون الكلمة:\n🔸 *${selectedGamaa.question}*\n\n⏳ الوقت: ${gameTime/1000} ثانية\n🎯 اختر الكلمة الصحيحة من الأسفل 👇` }),
+                        footer: proto.Message.InteractiveMessage.Footer.create({ text: "Gamaa Game" }),
+                        nativeFlowMessage: proto.Message.InteractiveMessage.NativeFlowMessage.fromObject({ buttons })
+                    })
+                }
+            }
+        }, { quoted: m })
+
+        await conn.relayMessage(chatId, gameMsg.message, { messageId: gameMsg.key.id })
+
+    } catch (err) {
+        console.error(err)
+        gamaaGames.delete(chatId)
+        let info = '❌ حدث خطأ أثناء تشغيل اللعبة، حاول مرة أخرى.'
+        return conn.reply(chatId, info, fkontak, rcanal)
+    }
+}
+
+handler.help = ['جمع']
+handler.tags = ['الـالـعـاب']
+handler.command = ['جمع'[
+
+export default handler
