@@ -1,0 +1,26 @@
+{
+  "reaction": "🃏",
+  "reaction_status": "on",
+  "group": {
+    "status": "on",
+    "newSubject": "مـــزࢪوف┇𝑅𝐸𝑍𝐸",
+    "newDescription": "*مكسل احط وصف ياورعين*"
+  },
+  "messages": {
+    "status": "on",
+    "mention": " *اجا الأسد😱* ",
+    "final": "*ارتاحو شويه🐼*"
+  },
+  "media": {
+    "status": "on",
+    "image": "src/قوائم.jpg"
+  },
+  "audio": {
+    "file": "src/زرف.mp3",
+    "status": "on"
+  },
+  "sticker": {
+    "file": "src/زرف.webp",
+    "status": "on"
+  }
+}
